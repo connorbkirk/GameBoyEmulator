@@ -11,14 +11,14 @@
 #define REG_L 6
 #define REG_F 7
 #define FLAG_ZERO 7
-#define FLAG_SUB 5
+#define FLAG_SUB 6
 #define FLAG_HALF_CARRY 5
 #define FLAG_CARRY 4
 
 typedef struct{
-        uchar registers[8];
-        uchar display[23040];
-        uchar memory[65535];
+        char registers[8];
+        unsigned char display[23040];
+        char memory[65535];
         int16_t sp;
         int16_t pc;
         bool need_redraw;
@@ -30,3 +30,6 @@ void load_game( z80_t * z80, char * name );
 void repaint_z80(z80_t * z80);
 void reset_draw_flag(z80_t * z80);
 
+typedef enum{
+	NZ, Z, NC, C
+} cc;
