@@ -75,6 +75,20 @@ void add_regs(z80_t * z80, int reg1, int reg2){
 	}
 }
 
+void add_i(z80_t * z80, int reg1, int16_t immediate){
+	z80->registers[reg1] += immediate;
+	z80->registers[REG_F] &= ~(1 << FLAG_SUB);
+	if(z80->registers[reg1] == 0){
+		z80->registers[REG_F] |= (1 << FLAG_ZERO);
+	}
+	if(z80->registers[reg1] > 15){
+		z80->registers[REG_F] |= (1 < FLAG_HALF_CARRY);
+	}
+	if(z80->registers[reg1] > 255){
+		z80->registers[REG_F] |= (1 << FLAG_CARRY);
+	}
+}
+
 void call_z80(z80_t * z80, int16_t nn){
 	int16_t addr;
 	addr = z80->pc + 1;
@@ -201,6 +215,34 @@ int run_z80( z80_t * z80 ){
 		}
 
 		//ADD
+		case 0x80:{//ADD A, B
+			add_regs(z80, REG_A, REG_B);
+			return 4;
+		}
+		case 0x81:{//ADD A, C
+			add_regs(z80, REG_A, REG_C);
+			return 4;
+		}
+		case 0x82:{//ADD A, D
+			add_regs(z80, REG_A, REG_D);
+			return 4;
+		}
+		case 0x83:{//ADD A, E
+			add_regs(z80, REG_A, REG_E);
+			return 4;
+		}
+		case 0x84:{//ADD A, H
+			add_regs(z80, REG_A, REG_H);
+			return 4;
+		}
+		case 0x85:{//ADD A, L
+			add_regs(z80, REG_A, REG_L);
+			return 4;
+		}
+		case 0x86:{//ADD A, HL
+			add_i(z80, REG_A, combine_regs(z80, REG_H, REG_L));
+			return 8;
+		}
 		case 0x87:{//ADD A, A
 			add_regs(z80, REG_A, REG_A);
 			return 4;
