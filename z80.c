@@ -22,7 +22,7 @@ unsigned char pop_z80( z80_t * z80 ){
 	return z80->memory[z80->sp];
 }
 
-int16_t combine_reg(z80_t * z80, int left, int right){
+int16_t combine_regs(z80_t * z80, int left, int right){
 	return z80->registers[left] << 8 | z80->registers[right];
 }
 
@@ -50,6 +50,28 @@ void jump_nn_z80(z80_t * z80, int16_t nn){
 void jump_cc_z80(z80_t * z80, cc cond, int16_t nn){
 	if( check_cc(z80, cond) ){
 		jump_nn_z80(z80, nn);
+	}
+}
+
+void load_regs(z80_t * z80, int reg1, int reg2){
+	z80->registers[reg1] = z80->registers[reg2];
+}
+
+void load_i(z80_t * z80, int reg, int16_t immediate){
+	z80->registers[reg] = immediate;
+}
+
+void add_regs(z80_t * z80, int reg1, int reg2){
+	z80->registers[reg1] += z80->registers[reg2];
+	z80->registers[REG_F] &= ~(1 << FLAG_SUB);
+	if(z80->registers[reg1] == 0){
+		z80->registers[REG_F] |= (1 << FLAG_ZERO);
+	}
+	if(z80->registers[reg1] > 15){
+		z80->registers[REG_F] |= (1 < FLAG_HALF_CARRY);
+	}
+	if(z80->registers[reg1] > 255){
+		z80->registers[REG_F] |= (1 << FLAG_CARRY);
 	}
 }
 
@@ -157,7 +179,7 @@ int run_z80( z80_t * z80 ){
 			return 12;
 		}
 		case 0xE9:{//JMP HL
-			nn = combine_reg(z80, REG_H, REG_L);
+			nn = combine_regs(z80, REG_H, REG_L);
 			jump_nn_z80(z80, nn);
 			return 4;
 		}
@@ -166,6 +188,22 @@ int run_z80( z80_t * z80 ){
 			nn = z80->pc + n;
 			jump_nn_z80(z80, nn);
 			return 8;
+		}
+
+		//LOAD
+		case 0x7F:{//LD A, A 
+			load_regs(z80, REG_A, REG_A);
+			return 4;
+		}
+		case 0x7E:{//LD A, HL
+			load_i(z80, REG_A, combine_regs(z80, REG_H, REG_L));
+			return 8;
+		}
+
+		//ADD
+		case 0x87:{//ADD A, A
+			add_regs(z80, REG_A, REG_A);
+			return 4;
 		}
 
 		//RETURN
