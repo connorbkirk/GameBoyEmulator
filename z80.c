@@ -1,6 +1,6 @@
 /* represents the z80 microcontroller that the game boy utilizes */
 
-#include "z80.h"
+#include "ops.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -97,228 +97,58 @@ void call_z80(z80_t * z80, uint16_t nn){
 	jump_nn_z80( z80, nn );
 }
 
+unsigned char read_8bit_z80( z80_t * z80, uint16_t addr ){
+	return z80->memory[addr];
+}
+
+uint16_t read_16bit_z80( z80_t * z80, uint16_t addr ){
+	return z80->memory[addr] | (z80->memory[addr+1] << 8);
+}
+
 int run_z80( z80_t * z80 ){
-	unsigned char opcode;
-	uint16_t nn;
-	char n;
-	//todo - fetch opcode
-	opcode = z80->memory[z80->pc];
+	unsigned char instr;
+	uint16_t operand;
 
-	switch(opcode){
+	instr = z80->memory[z80->pc++];
+	operand = 0;
 
-		//PUSH
-		case 0xF5:{//PUSH AF
-			push_z80( z80, z80->registers[REG_A] );
-			push_z80( z80, z80->registers[REG_F] );
-			z80->pc++;
-			return 16;
-		}
-		case 0xC5:{//PUSH BC
-			push_z80( z80, z80->registers[REG_B] );
-			push_z80( z80, z80->registers[REG_C] );
-			z80->pc++;
-			return 16;
-		}
-		case 0xD5:{//PUSH DE
-			push_z80( z80, z80->registers[REG_D] );
-			push_z80( z80, z80->registers[REG_E] );
-			z80->pc++;
-			return 16;
-		}
-		case 0xE5:{//PUSH HL
-			push_z80( z80, z80->registers[REG_H] );
-			push_z80( z80, z80->registers[REG_L] );
-			z80->pc++;
-			return 16;
-		}
-
-		//POP
-		case 0xF1:{//POP AF
-			z80->registers[REG_F] = pop_z80( z80 );
-			z80->registers[REG_A] = pop_z80( z80 );
-			z80->pc++;
-			return 12;
-		}
-		case 0xC1:{//POP BC
-			z80->registers[REG_C] = pop_z80( z80 );
-			z80->registers[REG_B] = pop_z80( z80 );
-			z80->pc++;
-			return 12;
-		}
-		case 0xD1:{//POP DE
-			z80->registers[REG_E] = pop_z80( z80 );
-			z80->registers[REG_D] = pop_z80( z80 );
-			z80->pc++;
-			return 12;
-		}
-		case 0xE1:{//POP HL
-			z80->registers[REG_L] = pop_z80( z80 );
-			z80->registers[REG_H] = pop_z80( z80 );
-			z80->pc++;
-			return 12;
-		}
-
-		//CALL
-		case 0xCD:{//CALL nn
-			nn = z80->memory[z80->pc+1] | (z80->memory[z80->pc+2] << 8);
-			call_z80(z80, nn);
-			return 12;
-		}
-
-		//JMP
-		case 0xC3:{//JMP nn
-			nn = z80->memory[z80->pc+1] | (z80->memory[z80->pc+2] << 8);
-			jump_nn_z80(z80, nn);
-			return 12;
-			
-		}
-		case 0xC2:{//JMP NZ, nn
-			nn = z80->memory[z80->pc+1] | (z80->memory[z80->pc+2] << 8);
-			jump_cc_z80(z80, NZ, nn);
-			return 12;
-		}
-		case 0xCA:{//JMP Z, nn
-			nn = z80->memory[z80->pc+1] | (z80->memory[z80->pc+2] << 8);
-			jump_cc_z80(z80, Z, nn);
-			return 12;
-		}
-		case 0xD2:{//JMP NC, nn
-			nn = z80->memory[z80->pc+1] | (z80->memory[z80->pc+2] << 8);
-			jump_cc_z80(z80, NC, nn);
-			return 12;
-		}
-		case 0xDA:{//JMP C, nn
-			nn = z80->memory[z80->pc+1] | (z80->memory[z80->pc+2] << 8);
-			jump_cc_z80(z80, C, nn);
-			return 12;
-		}
-		case 0xE9:{//JMP HL
-			nn = combine_regs(z80, REG_H, REG_L);
-			jump_nn_z80(z80, nn);
-			return 4;
-		}
-		case 0x18:{//JR n
-			n = z80->memory[z80->pc + 1];	
-			nn = z80->pc + n;
-			jump_nn_z80(z80, nn);
-			return 8;
-		}
-
-		//LOAD
-		//LD nn, n
-		case 0x06:{//LD B, n
-			n = z80->memory[z80->pc + 1];
-			load_i(z80, REG_B, n);
-			return 8;
-		}
-		case 0x0E:{//LD C, n
-			n = z80->memory[z80->pc + 1];
-			load_i(z80, REG_C, n);
-			return 8;
-		}
-		case 0x16:{//LD D, n
-			n = z80->memory[z80->pc + 1];
-			load_i(z80, REG_D, n);
-			return 8;
-		}
-		case 0x1E:{//LD E, n
-			n = z80->memory[z80->pc + 1];
-			load_i(z80, REG_E, n);
-			return 8;
-		}
-		case 0x26:{//LD H, n
-			n = z80->memory[z80->pc + 1];
-			load_i(z80, REG_H, n);
-			return 8;
-		}
-		case 0x2E:{//LD L, n
-			n = z80->memory[z80->pc + 1];
-			load_i(z80, REG_L, n);
-			return 8;
-		}
-		//LD r1, r2
-		case 0x7F:{//LD A, A 
-			load_regs(z80, REG_A, REG_A);
-			return 4;
-		}
-		case 0x78:{//LD A, B 
-			load_regs(z80, REG_A, REG_B);
-			return 4;
-		}
-		case 0x79:{//LD A, C 
-			load_regs(z80, REG_A, REG_C);
-			return 4;
-		}
-		case 0x7A:{//LD A, D 
-			load_regs(z80, REG_A, REG_D);
-			return 4;
-		}
-		case 0x7B:{//LD A, E 
-			load_regs(z80, REG_A, REG_E);
-			return 4;
-		}
-		case 0x7C:{//LD A, H 
-			load_regs(z80, REG_A, REG_H);
-			return 4;
-		}
-		case 0x7D:{//LD A, L 
-			load_regs(z80, REG_A, REG_L);
-			return 4;
-		}
-		case 0x7E:{//LD A, HL
-			load_i(z80, REG_A, combine_regs(z80, REG_H, REG_L));
-			return 8;
-		}
-		
-
-		//ADD
-		case 0x80:{//ADD A, B
-			add_regs(z80, REG_A, REG_B);
-			return 4;
-		}
-		case 0x81:{//ADD A, C
-			add_regs(z80, REG_A, REG_C);
-			return 4;
-		}
-		case 0x82:{//ADD A, D
-			add_regs(z80, REG_A, REG_D);
-			return 4;
-		}
-		case 0x83:{//ADD A, E
-			add_regs(z80, REG_A, REG_E);
-			return 4;
-		}
-		case 0x84:{//ADD A, H
-			add_regs(z80, REG_A, REG_H);
-			return 4;
-		}
-		case 0x85:{//ADD A, L
-			add_regs(z80, REG_A, REG_L);
-			return 4;
-		}
-		case 0x86:{//ADD A, HL
-			add_i(z80, REG_A, combine_regs(z80, REG_H, REG_L));
-			return 8;
-		}
-		case 0x87:{//ADD A, A
-			add_regs(z80, REG_A, REG_A);
-			return 4;
-		}
-
-		//RETURN
-		case 0xC9:{//RET
-			nn = pop_z80(z80) | (pop_z80(z80) << 8);
-			jump_nn_z80(z80, nn);
-			return 8;
-		}
-		
-		default:
-			return 4;
+	if(instructions[instr].operand_length == 0){
+		((void(*)(void))instructions[instr].exec)();
 	}
+	else if(instructions[instr].operand_length == 1){
+		operand = (uint16_t)read_8bit_z80(z80, z80->pc);
+		((void(*)(unsigned char))instructions[instr].exec)((unsigned char)operand);
+	}
+	else if(instructions[instr].operand_length == 2){
+		operand = read_16bit_z80(z80, z80->pc);
+		((void(*)(uint16_t))instructions[instr].exec)(operand);
+	}
+	z80->pc += instructions[instr].operand_length;
+
+	return instruction_ticks[instr];
 }
 
-void load_game( z80_t * z80, char * name ){
+void load_game( z80_t * z80, char * file ){
+	FILE *fp;
+	size_t read;
+
+	//open file in read-only mode
+	fp = fopen(file, "r");
+
+	if(!fp){
+		fprintf(stderr, "File %s could not be opened\n", file);
+		exit(1);
+	}
+	
+	read = fread(z80->memory, 1, 0x7FFF, fp);
+	if(!read){
+		fprintf(stderr, "File %s could not be read\n", file);
+		exit(1);
+	}
+
+	fclose(fp);
 }
+
 void repaint_z80(z80_t * z80){}
 void reset_draw_flag(z80_t * z80){}
 

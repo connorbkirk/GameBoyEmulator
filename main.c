@@ -1,7 +1,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "z80.h"
+#include "ops.h"
 
 #define BILLION 1000000000L
 
