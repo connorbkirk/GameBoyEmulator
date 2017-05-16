@@ -43,11 +43,11 @@ bool check_cc(z80_t * z80, cc cond){
 
 }
 
-void jump_nn_z80(z80_t * z80, int16_t nn){
+void jump_nn_z80(z80_t * z80, uint16_t nn){
 	z80->pc = nn;
 }
 
-void jump_cc_z80(z80_t * z80, cc cond, int16_t nn){
+void jump_cc_z80(z80_t * z80, cc cond, uint16_t nn){
 	if( check_cc(z80, cond) ){
 		jump_nn_z80(z80, nn);
 	}
@@ -57,7 +57,7 @@ void load_regs(z80_t * z80, int reg1, int reg2){
 	z80->registers[reg1] = z80->registers[reg2];
 }
 
-void load_i(z80_t * z80, int reg, int16_t immediate){
+void load_i(z80_t * z80, int reg, uint16_t immediate){
 	z80->registers[reg] = immediate;
 }
 
@@ -75,7 +75,7 @@ void add_regs(z80_t * z80, int reg1, int reg2){
 	}
 }
 
-void add_i(z80_t * z80, int reg1, int16_t immediate){
+void add_i(z80_t * z80, int reg1, uint16_t immediate){
 	z80->registers[reg1] += immediate;
 	z80->registers[REG_F] &= ~(1 << FLAG_SUB);
 	if(z80->registers[reg1] == 0){
@@ -89,7 +89,7 @@ void add_i(z80_t * z80, int reg1, int16_t immediate){
 	}
 }
 
-void call_z80(z80_t * z80, int16_t nn){
+void call_z80(z80_t * z80, uint16_t nn){
 	int16_t addr;
 	addr = z80->pc + 1;
 	push_z80( z80, addr >> 8 );
@@ -99,10 +99,10 @@ void call_z80(z80_t * z80, int16_t nn){
 
 int run_z80( z80_t * z80 ){
 	unsigned char opcode;
-	int16_t nn;
+	uint16_t nn;
 	char n;
 	//todo - fetch opcode
-	opcode = 0x0;
+	opcode = z80->memory[z80->pc];
 
 	switch(opcode){
 
@@ -205,14 +205,71 @@ int run_z80( z80_t * z80 ){
 		}
 
 		//LOAD
+		//LD nn, n
+		case 0x06:{//LD B, n
+			n = z80->memory[z80->pc + 1];
+			load_i(z80, REG_B, n);
+			return 8;
+		}
+		case 0x0E:{//LD C, n
+			n = z80->memory[z80->pc + 1];
+			load_i(z80, REG_C, n);
+			return 8;
+		}
+		case 0x16:{//LD D, n
+			n = z80->memory[z80->pc + 1];
+			load_i(z80, REG_D, n);
+			return 8;
+		}
+		case 0x1E:{//LD E, n
+			n = z80->memory[z80->pc + 1];
+			load_i(z80, REG_E, n);
+			return 8;
+		}
+		case 0x26:{//LD H, n
+			n = z80->memory[z80->pc + 1];
+			load_i(z80, REG_H, n);
+			return 8;
+		}
+		case 0x2E:{//LD L, n
+			n = z80->memory[z80->pc + 1];
+			load_i(z80, REG_L, n);
+			return 8;
+		}
+		//LD r1, r2
 		case 0x7F:{//LD A, A 
 			load_regs(z80, REG_A, REG_A);
+			return 4;
+		}
+		case 0x78:{//LD A, B 
+			load_regs(z80, REG_A, REG_B);
+			return 4;
+		}
+		case 0x79:{//LD A, C 
+			load_regs(z80, REG_A, REG_C);
+			return 4;
+		}
+		case 0x7A:{//LD A, D 
+			load_regs(z80, REG_A, REG_D);
+			return 4;
+		}
+		case 0x7B:{//LD A, E 
+			load_regs(z80, REG_A, REG_E);
+			return 4;
+		}
+		case 0x7C:{//LD A, H 
+			load_regs(z80, REG_A, REG_H);
+			return 4;
+		}
+		case 0x7D:{//LD A, L 
+			load_regs(z80, REG_A, REG_L);
 			return 4;
 		}
 		case 0x7E:{//LD A, HL
 			load_i(z80, REG_A, combine_regs(z80, REG_H, REG_L));
 			return 8;
 		}
+		
 
 		//ADD
 		case 0x80:{//ADD A, B

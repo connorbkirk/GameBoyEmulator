@@ -16,11 +16,11 @@
 #define FLAG_CARRY 4
 
 typedef struct{
-        char registers[8];
-        unsigned char display[23040];
-        char memory[65535];
-        int16_t sp;
-        int16_t pc;
+        unsigned char registers[8];
+        unsigned char display[160*144];
+        unsigned char memory[65535];
+        uint16_t sp;
+        uint16_t pc;
         bool need_redraw;
 } z80_t;
 
