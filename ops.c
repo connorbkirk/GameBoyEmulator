@@ -284,7 +284,9 @@ void nop(z80_t * z80){}// 0x00
 void ld_bc_nn(z80_t * z80, uint16_t operand){
 	
 }// 0x01
-void ld_bcp_a(z80_t * z80){}// 0x02
+void ld_bcp_a(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_B] << 8) + z80->registers[REG_C], z80->registers[REG_A]);
+}// 0x02
 void inc_bc(z80_t * z80){}// 0x03
 void inc_b(z80_t * z80){}// 0x04
 void dec_b(z80_t * z80){}// 0x05
@@ -294,7 +296,9 @@ void ld_b_n(z80_t * z80, unsigned char operand){
 void rlca(z80_t * z80){}// 0x07
 void ld_nnp_sp(z80_t * z80, uint16_t operand){}// 0x08
 void add_hl_bc(z80_t * z80){}// 0x09
-void ld_a_bcp(z80_t * z80){}// 0x0a
+void ld_a_bcp(z80_t * z80){
+	z80->registers[REG_A] = read_8bit_z80( z80, (z80->registers[REG_B] << 8) + z80->registers[REG_C] );
+}// 0x0a
 void dec_bc(z80_t * z80){}// 0x0b
 void inc_c(z80_t * z80){}// 0x0c
 void dec_c(z80_t * z80){}// 0x0d
@@ -304,7 +308,9 @@ void ld_c_n(z80_t * z80, unsigned char operand){
 void rrca(z80_t * z80){}
 void stop(z80_t * z80, unsigned char operand){}
 void ld_de_nn(z80_t * z80, uint16_t operand){}
-void ld_dep_a(z80_t * z80){}
+void ld_dep_a(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_D] << 8) + z80->registers[REG_E], z80->registers[REG_A]);
+}// 0x12
 void inc_de(z80_t * z80){}
 void inc_d(z80_t * z80){}
 void dec_d(z80_t * z80){}
@@ -314,7 +320,9 @@ void ld_d_n(z80_t * z80, unsigned char operand){
 void rla(z80_t * z80){}
 void jr_n(z80_t * z80, unsigned char operand){}
 void add_hl_de(z80_t * z80){}
-void ld_a_dep(z80_t * z80){}
+void ld_a_dep(z80_t * z80){
+	z80->registers[REG_A] = read_8bit_z80( z80, (z80->registers[REG_D] << 8) + z80->registers[REG_E] );
+}// 0x1a
 void dec_de(z80_t * z80){}
 void inc_e(z80_t * z80){}
 void dec_e(z80_t * z80){}
@@ -348,7 +356,9 @@ void ldd_hlp_a(z80_t * z80){}
 void inc_sp(z80_t * z80){}
 void inc_hlp(z80_t * z80){}
 void dec_hlp(z80_t * z80){}
-void ld_hlp_n(z80_t * z80, unsigned char operand){}
+void ld_hlp_n(z80_t * z80, unsigned char operand){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], operand);
+}// 0x36
 void scf(z80_t * z80){}
 void jr_c_n(char operand){}
 void add_hl_sp(z80_t * z80){}
@@ -356,7 +366,9 @@ void ldd_a_hlp(z80_t * z80){}
 void dec_sp(z80_t * z80){}
 void inc_a(z80_t * z80){}
 void dec_a(z80_t * z80){}
-void ld_a_n(z80_t * z80, unsigned char operand){}
+void ld_a_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_A] = operand;
+}// 0x3e
 void ccf(z80_t * z80){}
 void ld_b_c(z80_t * z80){
 	z80->registers[REG_B] = z80->registers[REG_C];
@@ -374,7 +386,7 @@ void ld_b_l(z80_t * z80){
 	z80->registers[REG_B] = z80->registers[REG_L];
 }// 0x45
 void ld_b_hlp(z80_t * z80){
-	//TODO
+	z80->registers[REG_B] = read_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L]);
 }// 0x46
 void ld_b_a(z80_t * z80){
 	z80->registers[REG_B] = z80->registers[REG_A];
@@ -395,7 +407,7 @@ void ld_c_l(z80_t * z80){
 	z80->registers[REG_C] = z80->registers[REG_L];
 }// 0x4d
 void ld_c_hlp(z80_t * z80){	
-	//TODO
+	z80->registers[REG_C] = read_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L]);
 }// 0x4e
 void ld_c_a(z80_t * z80){
 	z80->registers[REG_C] = z80->registers[REG_A];
@@ -416,7 +428,7 @@ void ld_d_l(z80_t * z80){
 	z80->registers[REG_D] = z80->registers[REG_L];
 }// 0x55
 void ld_d_hlp(z80_t * z80){	
-	//TODO
+	z80->registers[REG_D] = read_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L]);
 }// 0x56
 void ld_d_a(z80_t * z80){
 	z80->registers[REG_D] = z80->registers[REG_A];
@@ -437,7 +449,7 @@ void ld_e_l(z80_t * z80){
 	z80->registers[REG_E] = z80->registers[REG_L];
 }// 0x5d
 void ld_e_hlp(z80_t * z80){
-	//TODO
+	z80->registers[REG_E] = read_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L]);
 }// 0x5e
 void ld_e_a(z80_t * z80){
 	z80->registers[REG_E] = z80->registers[REG_A];
@@ -458,7 +470,7 @@ void ld_h_l(z80_t * z80){
 	z80->registers[REG_H] = z80->registers[REG_L];
 }// 0x65
 void ld_h_hlp(z80_t * z80){
-	//TODO
+	z80->registers[REG_H] = read_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L]);
 }// 0x66
 void ld_h_a(z80_t * z80){
 	z80->registers[REG_H] = z80->registers[REG_A];
@@ -479,25 +491,32 @@ void ld_l_h(z80_t * z80){
 	z80->registers[REG_L] = z80->registers[REG_H];
 }// 0x6c
 void ld_l_hlp(z80_t * z80){
-	//TODO
+	z80->registers[REG_L] = read_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L]);
 }// 0x6e
 void ld_l_a(z80_t * z80){
 	z80->registers[REG_L] = z80->registers[REG_A];
 }// 0x6f
 void ld_hlp_b(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_B]);
 }// 0x70
 void ld_hlp_c(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_C]);
 }// 0x71
 void ld_hlp_d(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_D]);
 }// 0x72
 void ld_hlp_e(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_E]);
 }// 0x73
 void ld_hlp_h(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_H]);
 }// 0x74
 void ld_hlp_l(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_L]);
 }// 0x75
 void halt(z80_t * z80){}// 0x76
 void ld_hlp_a(z80_t * z80){
+	write_8bit_z80(z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L], z80->registers[REG_A]);
 }// 0x77
 void ld_a_b(z80_t * z80){
 	z80->registers[REG_A] = z80->registers[REG_B];
@@ -518,7 +537,7 @@ void ld_a_l(z80_t * z80){
 	z80->registers[REG_A] = z80->registers[REG_L];
 }// 0x7d
 void ld_a_hlp(z80_t * z80){
-	//TODO
+	z80->registers[REG_A] = read_8bit_z80( z80, (z80->registers[REG_H] << 8) + z80->registers[REG_L] );
 }// 0x7e
 void add_a_b(z80_t * z80){}
 void add_a_c(z80_t * z80){}
@@ -613,18 +632,24 @@ void sbc_n(z80_t * z80, unsigned char operand){}
 void rst_18(z80_t * z80){}
 void ld_ff_n_ap(z80_t * z80, unsigned char operand){}
 void pop_hl(z80_t * z80){}
-void ld_ff_c_a(z80_t * z80){}
+void ld_ff_c_a(z80_t * z80){
+	write_8bit_z80(z80, z80->registers[REG_C] + 0xff00, z80->registers[REG_A]);
+}// 0xe2
 void push_hl(z80_t * z80){}
 void and_n(z80_t * z80, unsigned char operand){}
 void rst_20(z80_t * z80){}
 void add_sp_n(char operand){}
 void jp_hl(z80_t * z80){}
-void ld_nnp_a(z80_t * z80, uint16_t operand){}
+void ld_nnp_a(z80_t * z80, uint16_t operand){
+	write_8bit_z80(z80, operand, z80->registers[REG_A]);
+}// 0xea
 void xor_n(z80_t * z80, unsigned char operand){}
 void rst_28(z80_t * z80){}
 void ld_ff_ap_n(z80_t * z80, unsigned char operand){}
 void pop_af(z80_t * z80){}
-void ld_a_ff_c(z80_t * z80){}
+void ld_a_ff_c(z80_t * z80){
+	z80->registers[REG_A] = read_8bit_z80(z80, z80->registers[REG_C] + 0xff00);
+}// 0xf2
 void di_inst(z80_t * z80){}
 void push_af(z80_t * z80){}
 void or_n(z80_t * z80, unsigned char operand){}

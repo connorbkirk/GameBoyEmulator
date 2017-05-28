@@ -29,6 +29,10 @@ int run_z80( z80_t * z80 );
 void load_game( z80_t * z80, char * name );
 void repaint_z80(z80_t * z80);
 void reset_draw_flag(z80_t * z80);
+unsigned char read_8bit_z80( z80_t * z80, uint16_t addr );
+void write_8bit_z80( z80_t * z80, uint16_t addr, unsigned char value );
+uint16_t read_16bit_z80( z80_t * z80, uint16_t addr );
+void write_16bit_z80( z80_t * z80, uint16_t addr, uint16_t value );
 
 typedef enum{
 	NZ, Z, NC, C

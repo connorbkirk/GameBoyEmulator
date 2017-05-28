@@ -101,8 +101,17 @@ unsigned char read_8bit_z80( z80_t * z80, uint16_t addr ){
 	return z80->memory[addr];
 }
 
+void write_8bit_z80( z80_t * z80, uint16_t addr, unsigned char value ){
+	z80->memory[addr] = value;
+}
+
 uint16_t read_16bit_z80( z80_t * z80, uint16_t addr ){
 	return z80->memory[addr] | (z80->memory[addr+1] << 8);
+}
+
+void write_16bit_z80( z80_t * z80, uint16_t addr, uint16_t value ){
+	z80->memory[addr] = (value & 0x00ff);
+	z80->memory[addr + 1] = (value & 0xff00) >> 8;
 }
 
 int run_z80( z80_t * z80 ){
