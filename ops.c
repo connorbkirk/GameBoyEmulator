@@ -280,21 +280,27 @@ const struct instruction instructions[256] = {
 
 
 void undefined(z80_t * z80){}
-void nop(z80_t * z80){}
-void ld_bc_nn(z80_t * z80, uint16_t operand){}
-void ld_bcp_a(z80_t * z80){}
-void inc_bc(z80_t * z80){}
-void inc_b(z80_t * z80){}
-void dec_b(z80_t * z80){}
-void ld_b_n(z80_t * z80, unsigned char operand){}
-void rlca(z80_t * z80){}
-void ld_nnp_sp(z80_t * z80, uint16_t operand){}
-void add_hl_bc(z80_t * z80){}
-void ld_a_bcp(z80_t * z80){}
-void dec_bc(z80_t * z80){}
-void inc_c(z80_t * z80){}
-void dec_c(z80_t * z80){}
-void ld_c_n(z80_t * z80, unsigned char operand){}
+void nop(z80_t * z80){}// 0x00
+void ld_bc_nn(z80_t * z80, uint16_t operand){
+	
+}// 0x01
+void ld_bcp_a(z80_t * z80){}// 0x02
+void inc_bc(z80_t * z80){}// 0x03
+void inc_b(z80_t * z80){}// 0x04
+void dec_b(z80_t * z80){}// 0x05
+void ld_b_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_B] = operand;
+}// 0x06
+void rlca(z80_t * z80){}// 0x07
+void ld_nnp_sp(z80_t * z80, uint16_t operand){}// 0x08
+void add_hl_bc(z80_t * z80){}// 0x09
+void ld_a_bcp(z80_t * z80){}// 0x0a
+void dec_bc(z80_t * z80){}// 0x0b
+void inc_c(z80_t * z80){}// 0x0c
+void dec_c(z80_t * z80){}// 0x0d
+void ld_c_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_C] = operand;
+}//0x0e
 void rrca(z80_t * z80){}
 void stop(z80_t * z80, unsigned char operand){}
 void ld_de_nn(z80_t * z80, uint16_t operand){}
@@ -302,7 +308,9 @@ void ld_dep_a(z80_t * z80){}
 void inc_de(z80_t * z80){}
 void inc_d(z80_t * z80){}
 void dec_d(z80_t * z80){}
-void ld_d_n(z80_t * z80, unsigned char operand){}
+void ld_d_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_D] = operand;
+}// 0x16
 void rla(z80_t * z80){}
 void jr_n(z80_t * z80, unsigned char operand){}
 void add_hl_de(z80_t * z80){}
@@ -310,7 +318,9 @@ void ld_a_dep(z80_t * z80){}
 void dec_de(z80_t * z80){}
 void inc_e(z80_t * z80){}
 void dec_e(z80_t * z80){}
-void ld_e_n(z80_t * z80, unsigned char operand){}
+void ld_e_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_E] = operand;
+}// 0x1e
 void rra(z80_t * z80){}
 void jr_nz_n(z80_t * z80, unsigned char operand){}
 void ld_hl_nn(z80_t * z80, uint16_t operand){}
@@ -318,7 +328,9 @@ void ldi_hlp_a(z80_t * z80){}
 void inc_hl(z80_t * z80){}
 void inc_h(z80_t * z80){}
 void dec_h(z80_t * z80){}
-void ld_h_n(z80_t * z80, unsigned char operand){}
+void ld_h_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_H] = operand;
+}// 0x26
 void daa(z80_t * z80){}
 void jr_z_n(z80_t * z80, unsigned char operand){}
 void add_hl_hl(z80_t * z80){}
@@ -326,7 +338,9 @@ void ldi_a_hlp(z80_t * z80){}
 void dec_hl(z80_t * z80){}
 void inc_l(z80_t * z80){}
 void dec_l(z80_t * z80){}
-void ld_l_n(z80_t * z80, unsigned char operand){}
+void ld_l_n(z80_t * z80, unsigned char operand){
+	z80->registers[REG_L] = operand;
+}// 0x2e
 void cpl(z80_t * z80){}
 void jr_nc_n(char operand){}
 void ld_sp_nn(z80_t * z80, uint16_t operand){}
@@ -344,63 +358,168 @@ void inc_a(z80_t * z80){}
 void dec_a(z80_t * z80){}
 void ld_a_n(z80_t * z80, unsigned char operand){}
 void ccf(z80_t * z80){}
-void ld_b_c(z80_t * z80){}
-void ld_b_d(z80_t * z80){}
-void ld_b_e(z80_t * z80){}
-void ld_b_h(z80_t * z80){}
-void ld_b_l(z80_t * z80){}
-void ld_b_hlp(z80_t * z80){}
-void ld_b_a(z80_t * z80){}
-void ld_c_b(z80_t * z80){}
-void ld_c_d(z80_t * z80){}
-void ld_c_e(z80_t * z80){}
-void ld_c_h(z80_t * z80){}
-void ld_c_l(z80_t * z80){}
-void ld_c_hlp(z80_t * z80){}
-void ld_c_a(z80_t * z80){}
-void ld_d_b(z80_t * z80){}
-void ld_d_c(z80_t * z80){}
-void ld_d_e(z80_t * z80){}
-void ld_d_h(z80_t * z80){}
-void ld_d_l(z80_t * z80){}
-void ld_d_hlp(z80_t * z80){}
-void ld_d_a(z80_t * z80){}
-void ld_e_b(z80_t * z80){}
-void ld_e_c(z80_t * z80){}
-void ld_e_d(z80_t * z80){}
-void ld_e_h(z80_t * z80){}
-void ld_e_l(z80_t * z80){}
-void ld_e_hlp(z80_t * z80){}
-void ld_e_a(z80_t * z80){}
-void ld_h_b(z80_t * z80){}
-void ld_h_c(z80_t * z80){}
-void ld_h_d(z80_t * z80){}
-void ld_h_e(z80_t * z80){}
-void ld_h_l(z80_t * z80){}
-void ld_h_hlp(z80_t * z80){}
-void ld_h_a(z80_t * z80){}
-void ld_l_b(z80_t * z80){}
-void ld_l_c(z80_t * z80){}
-void ld_l_d(z80_t * z80){}
-void ld_l_e(z80_t * z80){}
-void ld_l_h(z80_t * z80){}
-void ld_l_hlp(z80_t * z80){}
-void ld_l_a(z80_t * z80){}
-void ld_hlp_b(z80_t * z80){}
-void ld_hlp_c(z80_t * z80){}
-void ld_hlp_d(z80_t * z80){}
-void ld_hlp_e(z80_t * z80){}
-void ld_hlp_h(z80_t * z80){}
-void ld_hlp_l(z80_t * z80){}
-void halt(z80_t * z80){}
-void ld_hlp_a(z80_t * z80){}
-void ld_a_b(z80_t * z80){}
-void ld_a_c(z80_t * z80){}
-void ld_a_d(z80_t * z80){}
-void ld_a_e(z80_t * z80){}
-void ld_a_h(z80_t * z80){}
-void ld_a_l(z80_t * z80){}
-void ld_a_hlp(z80_t * z80){}
+void ld_b_c(z80_t * z80){
+	z80->registers[REG_B] = z80->registers[REG_C];
+}// 0x41
+void ld_b_d(z80_t * z80){
+	z80->registers[REG_B] = z80->registers[REG_D];
+}// 0x42
+void ld_b_e(z80_t * z80){
+	z80->registers[REG_B] = z80->registers[REG_E];
+}// 0x43
+void ld_b_h(z80_t * z80){
+	z80->registers[REG_B] = z80->registers[REG_H];
+}// 0x44
+void ld_b_l(z80_t * z80){
+	z80->registers[REG_B] = z80->registers[REG_L];
+}// 0x45
+void ld_b_hlp(z80_t * z80){
+	//TODO
+}// 0x46
+void ld_b_a(z80_t * z80){
+	z80->registers[REG_B] = z80->registers[REG_A];
+}// 0x47
+void ld_c_b(z80_t * z80){
+	z80->registers[REG_C] = z80->registers[REG_B];
+}// 0x48
+void ld_c_d(z80_t * z80){
+	z80->registers[REG_C] = z80->registers[REG_D];
+}// 0x4a
+void ld_c_e(z80_t * z80){
+	z80->registers[REG_C] = z80->registers[REG_E];
+}// 0x4b
+void ld_c_h(z80_t * z80){ 
+	z80->registers[REG_C] = z80->registers[REG_H];
+}// 0x4c
+void ld_c_l(z80_t * z80){
+	z80->registers[REG_C] = z80->registers[REG_L];
+}// 0x4d
+void ld_c_hlp(z80_t * z80){	
+	//TODO
+}// 0x4e
+void ld_c_a(z80_t * z80){
+	z80->registers[REG_C] = z80->registers[REG_A];
+}// 0x4f
+void ld_d_b(z80_t * z80){
+	z80->registers[REG_D] = z80->registers[REG_B];
+}// 0x50
+void ld_d_c(z80_t * z80){
+	z80->registers[REG_D] = z80->registers[REG_C];
+}// 0x51
+void ld_d_e(z80_t * z80){
+	z80->registers[REG_D] = z80->registers[REG_E];
+}// 0x53
+void ld_d_h(z80_t * z80){
+	z80->registers[REG_D] = z80->registers[REG_H];
+}// 0x54
+void ld_d_l(z80_t * z80){
+	z80->registers[REG_D] = z80->registers[REG_L];
+}// 0x55
+void ld_d_hlp(z80_t * z80){	
+	//TODO
+}// 0x56
+void ld_d_a(z80_t * z80){
+	z80->registers[REG_D] = z80->registers[REG_A];
+}// 0x57
+void ld_e_b(z80_t * z80){
+	z80->registers[REG_E] = z80->registers[REG_B];
+}// 0x58
+void ld_e_c(z80_t * z80){
+	z80->registers[REG_E] = z80->registers[REG_C];
+}// 0x59
+void ld_e_d(z80_t * z80){
+	z80->registers[REG_E] = z80->registers[REG_D];
+}// 0x5a
+void ld_e_h(z80_t * z80){
+	z80->registers[REG_E] = z80->registers[REG_H];
+}// 0x5c
+void ld_e_l(z80_t * z80){
+	z80->registers[REG_E] = z80->registers[REG_L];
+}// 0x5d
+void ld_e_hlp(z80_t * z80){
+	//TODO
+}// 0x5e
+void ld_e_a(z80_t * z80){
+	z80->registers[REG_E] = z80->registers[REG_A];
+}// 0x5f
+void ld_h_b(z80_t * z80){
+	z80->registers[REG_H] = z80->registers[REG_B];
+}// 0x60
+void ld_h_c(z80_t * z80){
+	z80->registers[REG_H] = z80->registers[REG_C];
+}// 0x61
+void ld_h_d(z80_t * z80){
+	z80->registers[REG_H] = z80->registers[REG_D];
+}// 0x62
+void ld_h_e(z80_t * z80){
+	z80->registers[REG_H] = z80->registers[REG_E];
+}// 0x63
+void ld_h_l(z80_t * z80){
+	z80->registers[REG_H] = z80->registers[REG_L];
+}// 0x65
+void ld_h_hlp(z80_t * z80){
+	//TODO
+}// 0x66
+void ld_h_a(z80_t * z80){
+	z80->registers[REG_H] = z80->registers[REG_A];
+}// 0x67
+void ld_l_b(z80_t * z80){
+	z80->registers[REG_L] = z80->registers[REG_B];
+}// 0x68
+void ld_l_c(z80_t * z80){
+	z80->registers[REG_L] = z80->registers[REG_C];
+}// 0x69
+void ld_l_d(z80_t * z80){
+	z80->registers[REG_L] = z80->registers[REG_D];
+}// 0x6a
+void ld_l_e(z80_t * z80){
+	z80->registers[REG_L] = z80->registers[REG_E];
+}// 0x6b
+void ld_l_h(z80_t * z80){
+	z80->registers[REG_L] = z80->registers[REG_H];
+}// 0x6c
+void ld_l_hlp(z80_t * z80){
+	//TODO
+}// 0x6e
+void ld_l_a(z80_t * z80){
+	z80->registers[REG_L] = z80->registers[REG_A];
+}// 0x6f
+void ld_hlp_b(z80_t * z80){
+}// 0x70
+void ld_hlp_c(z80_t * z80){
+}// 0x71
+void ld_hlp_d(z80_t * z80){
+}// 0x72
+void ld_hlp_e(z80_t * z80){
+}// 0x73
+void ld_hlp_h(z80_t * z80){
+}// 0x74
+void ld_hlp_l(z80_t * z80){
+}// 0x75
+void halt(z80_t * z80){}// 0x76
+void ld_hlp_a(z80_t * z80){
+}// 0x77
+void ld_a_b(z80_t * z80){
+	z80->registers[REG_A] = z80->registers[REG_B];
+}// 0x78
+void ld_a_c(z80_t * z80){
+	z80->registers[REG_A] = z80->registers[REG_C];
+}// 0x79
+void ld_a_d(z80_t * z80){
+	z80->registers[REG_A] = z80->registers[REG_D];
+}// 0x7a
+void ld_a_e(z80_t * z80){
+	z80->registers[REG_A] = z80->registers[REG_E];
+}// 0x7b
+void ld_a_h(z80_t * z80){
+	z80->registers[REG_A] = z80->registers[REG_H];
+}// 0x7c
+void ld_a_l(z80_t * z80){
+	z80->registers[REG_A] = z80->registers[REG_L];
+}// 0x7d
+void ld_a_hlp(z80_t * z80){
+	//TODO
+}// 0x7e
 void add_a_b(z80_t * z80){}
 void add_a_c(z80_t * z80){}
 void add_a_d(z80_t * z80){}
