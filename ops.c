@@ -282,7 +282,8 @@ const struct instruction instructions[256] = {
 void undefined(z80_t * z80){}
 void nop(z80_t * z80){}// 0x00
 void ld_bc_nn(z80_t * z80, uint16_t operand){
-	
+	z80->registers[REG_B] = (operand & 0xff00) >> 8;
+	z80->registers[REG_C] = (operand & 0x00ff);
 }// 0x01
 void ld_bcp_a(z80_t * z80){
 	write_8bit_z80(z80, (z80->registers[REG_B] << 8) + z80->registers[REG_C], z80->registers[REG_A]);
@@ -304,10 +305,13 @@ void inc_c(z80_t * z80){}// 0x0c
 void dec_c(z80_t * z80){}// 0x0d
 void ld_c_n(z80_t * z80, unsigned char operand){
 	z80->registers[REG_C] = operand;
-}//0x0e
-void rrca(z80_t * z80){}
-void stop(z80_t * z80, unsigned char operand){}
-void ld_de_nn(z80_t * z80, uint16_t operand){}
+}// 0x0e
+void rrca(z80_t * z80){}// 0x0f
+void stop(z80_t * z80, unsigned char operand){}// 0x10
+void ld_de_nn(z80_t * z80, uint16_t operand){
+	z80->registers[REG_D] = (operand & 0xff00) >> 8;
+	z80->registers[REG_E] = (operand & 0x00ff);
+}// 0x11
 void ld_dep_a(z80_t * z80){
 	write_8bit_z80(z80, (z80->registers[REG_D] << 8) + z80->registers[REG_E], z80->registers[REG_A]);
 }// 0x12
@@ -331,7 +335,10 @@ void ld_e_n(z80_t * z80, unsigned char operand){
 }// 0x1e
 void rra(z80_t * z80){}
 void jr_nz_n(z80_t * z80, unsigned char operand){}
-void ld_hl_nn(z80_t * z80, uint16_t operand){}
+void ld_hl_nn(z80_t * z80, uint16_t operand){
+	z80->registers[REG_H] = (operand & 0xff00) >> 8;
+	z80->registers[REG_L] = (operand & 0x00ff);
+}// 0x21
 void ldi_hlp_a(z80_t * z80){
 	uint16_t address;
 	address = (z80->registers[REG_H] << 8) + z80->registers[REG_L];
@@ -364,8 +371,10 @@ void ld_l_n(z80_t * z80, unsigned char operand){
 	z80->registers[REG_L] = operand;
 }// 0x2e
 void cpl(z80_t * z80){}
-void jr_nc_n(char operand){}
-void ld_sp_nn(z80_t * z80, uint16_t operand){}
+void jr_nc_n(char operand){}// 0x30
+void ld_sp_nn(z80_t * z80, uint16_t operand){
+	z80->sp = operand;
+}// 0x31
 void ldd_hlp_a(z80_t * z80){
 	uint16_t address;
 	address = (z80->registers[REG_H] << 8) + z80->registers[REG_L];
@@ -682,13 +691,21 @@ void pop_af(z80_t * z80){}// 0xf1
 void ld_a_ff_c(z80_t * z80){
 	z80->registers[REG_A] = read_8bit_z80(z80, z80->registers[REG_C] + 0xff00);
 }// 0xf2
-void di_inst(z80_t * z80){}
-void push_af(z80_t * z80){}
-void or_n(z80_t * z80, unsigned char operand){}
-void rst_30(z80_t * z80){}
-void ld_hl_sp_n(z80_t * z80, unsigned char operand){}
-void ld_sp_hl(z80_t * z80){}
-void ld_a_nnp(z80_t * z80, uint16_t operand){}
+void di_inst(z80_t * z80){}// 0xf3
+void push_af(z80_t * z80){}// 0xf5
+void or_n(z80_t * z80, unsigned char operand){}// 0xf6
+void rst_30(z80_t * z80){}// 0xf7
+void ld_hl_sp_n(z80_t * z80, unsigned char operand){
+	int result;
+
+	result = z80->sp + (signed char) operand;
+	//STOPPED HERE
+}// 0xf8
+void ld_sp_hl(z80_t * z80){
+	z80->sp = (z80->registers[REG_H] << 8) + z80->registers[REG_L];
+}// 0xf9
+void ld_a_nnp(z80_t * z80, uint16_t operand){
+}// 0xfa
 void ei(z80_t * z80){}
 void cp_n(z80_t * z80, unsigned char operand){}
 void rst_38(z80_t * z80){}
