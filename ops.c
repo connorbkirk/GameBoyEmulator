@@ -295,7 +295,9 @@ void ld_b_n(z80_t * z80, unsigned char operand){
 	z80->registers[REG_B] = operand;
 }// 0x06
 void rlca(z80_t * z80){}// 0x07
-void ld_nnp_sp(z80_t * z80, uint16_t operand){}// 0x08
+void ld_nnp_sp(z80_t * z80, uint16_t operand){
+	write_16bit_z80(z80, operand, z80->sp);
+}// 0x08
 void add_hl_bc(z80_t * z80){}// 0x09
 void ld_a_bcp(z80_t * z80){
 	z80->registers[REG_A] = read_8bit_z80( z80, (z80->registers[REG_B] << 8) + z80->registers[REG_C] );
@@ -699,7 +701,28 @@ void ld_hl_sp_n(z80_t * z80, unsigned char operand){
 	int result;
 
 	result = z80->sp + (signed char) operand;
-	//STOPPED HERE
+	
+	//set carry flag
+	if(result & 0xffff0000){
+		z80->registers[REG_F] |= (1 << FLAG_CARRY);
+	}else{
+		z80->registers[REG_F] &= ~(1 << FLAG_CARRY);
+	}
+	
+	//set half carry flag
+	if( (z80->sp & 0x0f) + (operand & 0x0f) > 0x0f ){
+		z80->registers[REG_F] |= (1 << FLAG_HALF_CARRY);
+	}else{
+		z80->registers[REG_F] &= ~(1 << FLAG_HALF_CARRY);
+	}
+
+	//clear zero and subtract flags
+	z80->registers[REG_F] &= ~(1 << FLAG_ZERO);
+	z80->registers[REG_F] &= ~(1 << FLAG_SUB);
+
+	//set (HL) to result
+	z80->registers[REG_H] = (result & 0x0000ff00) >> 8;
+	z80->registers[REG_L] = (result & 0x000000ff);
 }// 0xf8
 void ld_sp_hl(z80_t * z80){
 	z80->sp = (z80->registers[REG_H] << 8) + z80->registers[REG_L];
