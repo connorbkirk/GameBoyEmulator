@@ -196,7 +196,7 @@ void cp_l(z80_t * z80);
 void cp_hlp(z80_t * z80);
 void cp_a(z80_t * z80);
 void ret_nz(z80_t * z80);
-void pop_bc(void);
+void pop_bc(z80_t * z80);
 void jp_nz_nn(z80_t * z80, uint16_t operand);
 void jp_nn(z80_t * z80, uint16_t operand);
 void call_nz_nn(z80_t * z80, uint16_t operand);
